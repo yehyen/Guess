@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -44,6 +45,15 @@ class MainActivity : AppCompatActivity() {
         // this代表MainActivity物件
         // 參數2指給使用者看的內容
         // 參數3指持續時間LENGTH_LONG=1
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
+        // 使用另一種提示元件：AlertDialog類別，彈出對話框
+        // Builder()可設計對話框內部的功能
+        AlertDialog.Builder(this)
+                .setTitle("Message")    // 設定標題
+                .setMessage(message)    // 設定訊息
+                .setPositiveButton("OK", null)    // 設定按鈕，參數2指按下後的反應
+                .show()
+
     }
 }
