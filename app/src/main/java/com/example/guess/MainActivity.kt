@@ -12,11 +12,13 @@ class MainActivity : AppCompatActivity() {
 
     // 產生猜數字物件
     val secretNumber = SecretNumber()
+    // 得到MainActivity的字串，讓Log除錯用
+    val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d("MainActivity", "secret:" + secretNumber.secret)
+        Log.d(TAG, "secret:" + secretNumber.secret)
 
     }
 
@@ -29,15 +31,15 @@ class MainActivity : AppCompatActivity() {
         println("number: $n")
 
         // 訊息處理Log類別，用.d方便除錯記錄，參數1指來自class名稱，參數2指出現的內容
-        Log.d("MainActivity", "number:" + n)
+        Log.d(TAG, "number:" + n)
 
         // 與使用者互動，輸入值來得到提示
         val diff = secretNumber.validate(n)
-        var message = "Yes, you got it"
+        var message = getString(R.string.yes_you_got_it)    // 字串抽取成資源共用，string.xml
         if(diff < 0){
-            message = "Bigger"
+            message = getString(R.string.bigger)
         }else if(diff > 0){
-            message = "Smaller"
+            message = getString(R.string.smaller)
         }
 
         //提示內容Toast類別：浮動元件
@@ -50,9 +52,9 @@ class MainActivity : AppCompatActivity() {
         // 使用另一種提示元件：AlertDialog類別，彈出對話框
         // Builder()可設計對話框內部的功能
         AlertDialog.Builder(this)
-                .setTitle("Message")    // 設定標題
+                .setTitle(getString(R.string.dialog_title))    // 設定標題
                 .setMessage(message)    // 設定訊息
-                .setPositiveButton("OK", null)    // 設定按鈕，參數2指按下後的反應
+                .setPositiveButton(getString(R.string.ok), null)    // 設定按鈕，參數2指按下後的反應
                 .show()
 
     }
