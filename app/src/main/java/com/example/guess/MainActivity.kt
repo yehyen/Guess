@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
                 .setTitle(getString(R.string.dialog_title))    // 設定標題
                 .setMessage(message)    // 設定訊息
-                .setPositiveButton(getString(R.string.ok), null)    // 設定按鈕，參數2指按下後的反應
+                .setPositiveButton(getString(R.string.ok), null)    // 設定正向按鈕，參數2指按下後的反應
                 .show()
 
     }
