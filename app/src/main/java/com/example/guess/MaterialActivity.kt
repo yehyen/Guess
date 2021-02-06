@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.content_material.*
 
@@ -23,8 +24,13 @@ class MaterialActivity : AppCompatActivity() {
         setContentView(R.layout.activity_material)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        // ViewModelProvider類別可生成ViewModel的類別；this指Activity，生出ViewModel給Activity使用
+        // ViewModelProvider類別可呼叫ViewModel的類別；this指Activity，生出ViewModel給Activity使用
         viewModel = ViewModelProvider(this).get(GuessViewModel::class.java)
+        // 呼叫要觀察的LiveData變數，this指Activity，參數2實作Observe(interface)，data指ViewModel的counter變動
+        viewModel.counter.observe(this, Observer { data ->
+            // 指layout裡的id：counter更改內容
+            counter.setText(data.toString())
+        })
 
         // 浮動元件：FloatingActionButton類別
         // layout>activity_material.xml>ComponentTree>fab>id；.setOnClickListener設定按下後的動作(lambda)
@@ -54,8 +60,8 @@ class MaterialActivity : AppCompatActivity() {
     }
 
     fun check(view: View){
-
-        val n = number.text.toString().toInt()
+        viewModel.guess(3)
+        /*val n = number.text.toString().toInt()
         println("number: $n")
 
         Log.d(TAG, "number:" + n)
@@ -77,7 +83,7 @@ class MaterialActivity : AppCompatActivity() {
             .setTitle(getString(R.string.dialog_title))
             .setMessage(message)
             .setPositiveButton(getString(R.string.ok), null)
-            .show()
+            .show()*/
 
     }
 }
