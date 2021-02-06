@@ -7,9 +7,13 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.content_material.*
 
 class MaterialActivity : AppCompatActivity() {
+
+    // 關鍵字lateinit指此變數晚一點才會給初始值，解決null問題
+    private lateinit var viewModel: GuessViewModel
 
     val secretNumber = SecretNumber()
     val TAG = MaterialActivity::class.java.simpleName
@@ -18,6 +22,9 @@ class MaterialActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_material)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        // ViewModelProvider類別可生成ViewModel的類別；this指Activity，生出ViewModel給Activity使用
+        viewModel = ViewModelProvider(this).get(GuessViewModel::class.java)
 
         // 浮動元件：FloatingActionButton類別
         // layout>activity_material.xml>ComponentTree>fab>id；.setOnClickListener設定按下後的動作(lambda)
