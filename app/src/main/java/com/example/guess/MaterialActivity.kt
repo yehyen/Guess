@@ -16,7 +16,6 @@ class MaterialActivity : AppCompatActivity() {
     // 關鍵字lateinit指此變數晚一點才會給初始值，解決null問題
     private lateinit var viewModel: GuessViewModel
 
-    val secretNumber = SecretNumber()
     val TAG = MaterialActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,10 +25,28 @@ class MaterialActivity : AppCompatActivity() {
 
         // ViewModelProvider類別可呼叫ViewModel的類別；this指Activity，生出ViewModel給Activity使用
         viewModel = ViewModelProvider(this).get(GuessViewModel::class.java)
-        // 呼叫要觀察的LiveData變數，this指Activity，參數2實作Observe(interface)，data指ViewModel的counter變動
+
+        // 呼叫要觀察的LiveData變數counter，若觀察到值有變動就執行data
+        // this指Activity，參數2實作Observe(interface)，data指ViewModel的counter變動
         viewModel.counter.observe(this, Observer { data ->
             // 指layout裡的id：counter更改內容
             counter.setText(data.toString())
+        })
+
+        // 呼叫觀察LiveData變數result，若觀察到值有變動就執行Observer的result
+        viewModel.result.observe(this, Observer { result ->
+            var message = when (result){
+                GameResult.BIGGER -> "Bigger"   // 改變提示框文字
+                GameResult.SMALLER -> "Smaller"
+                GameResult.NUMBER_RIGHT -> "Yes! You got it"
+            }
+
+            // 產生提示框
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title))
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok), null)
+                .show()
         })
 
         // 浮動元件：FloatingActionButton類別
@@ -42,25 +59,23 @@ class MaterialActivity : AppCompatActivity() {
                 // 正向按鈕-ok，lambda參數2指按下按鈕的反應
                 .setPositiveButton(getString(R.string.ok), { dialog, which ->
                     // 重置
-                    secretNumber.reset()
-                    // 按下ok(猜數字)顯示目前猜了幾次的次數
-                    counter.setText(secretNumber.count.toString())
+                    viewModel.reset()
                     // 輸入字串框也要重置
                     number.setText("")
                 })
                 // 中立按鈕
                 .setNeutralButton("Cancel", null)
                 .show()
+
+            viewModel.reset()
         }
 
-        // 按下ok(猜數字)顯示目前猜了幾次的次數
-        // 在content_material.xml設定完元件(counter)後，要產生對應關係
-        // 內容不論是數字符號都要先轉成string，否則系統會跑去找資源來對應
-        counter.setText(secretNumber.count.toString())
     }
 
     fun check(view: View){
-        viewModel.guess(3)
+        // 從使用者得到的輸入數字
+        val n = number.text.toString().toInt()
+        viewModel.guess(n)
         /*val n = number.text.toString().toInt()
         println("number: $n")
 
