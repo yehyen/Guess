@@ -1,5 +1,6 @@
 package com.example.guess
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +16,7 @@ class MaterialActivity : AppCompatActivity() {
 
     // 關鍵字lateinit指此變數晚一點才會給初始值，解決null問題
     private lateinit var viewModel: GuessViewModel
-
+    val secretNumber = SecretNumber()
     val TAG = MaterialActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,13 +71,15 @@ class MaterialActivity : AppCompatActivity() {
             viewModel.reset()
         }
 
+        Log.d(TAG, "onCreate: " + secretNumber.secret);
+
     }
 
     fun check(view: View){
         // 從使用者得到的輸入數字
+//        val n = number.text.toString().toInt()
+//        viewModel.guess(n)
         val n = number.text.toString().toInt()
-        viewModel.guess(n)
-        /*val n = number.text.toString().toInt()
         println("number: $n")
 
         Log.d(TAG, "number:" + n)
@@ -97,8 +100,20 @@ class MaterialActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.dialog_title))
             .setMessage(message)
-            .setPositiveButton(getString(R.string.ok), null)
-            .show()*/
+            // 事件處理-跳轉到另一頁面：當使用者猜對時，按下確認鍵後跳轉到另一頁面；若沒猜對不反應動作
+            .setPositiveButton(getString(R.string.ok), { dialog, which ->
+                if(diff == 0){
+                    // 回應使用者動作：intent類別與使用者互動產生變化，如按下按鈕啟動相機、轉換畫面、跳出功能…等等
+                    // 參數1從哪個Activity轉換到目標Activity；參數2指定目標Activity
+                    val intent = Intent(this, RecordActivity::class.java)
+                    // 傳遞原本畫面資料到目標畫面：將原本畫面的count加到intent物件中存入
+                    // 參數1給標籤；參數2要加的資料
+                    intent.putExtra("COUNTER", secretNumber.count)
+                    // 幫忙將intent物件送到Android系統，讓系統把Activity產生出來
+                    startActivity(intent)
+                }
+            })
+            .show()
 
     }
 }
