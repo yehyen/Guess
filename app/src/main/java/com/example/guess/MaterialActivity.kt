@@ -1,5 +1,6 @@
 package com.example.guess
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -72,6 +73,14 @@ class MaterialActivity : AppCompatActivity() {
         }
 
         Log.d(TAG, "onCreate: " + secretNumber.secret);
+
+        // 讀取已儲存的檔案，引數要與RecordActivity中的一致
+        val count = getSharedPreferences("guess", Context.MODE_PRIVATE)
+                .getInt("REC_COUNTER", -1)  // 沒讀到值時-1
+        val nickname = getSharedPreferences("guess", Context.MODE_PRIVATE)
+                .getString("REC_NICKNAME", null)
+        Log.d(TAG, "data: $count / $nickname")
+
 
     }
 
