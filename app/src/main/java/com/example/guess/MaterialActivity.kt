@@ -20,8 +20,10 @@ class MaterialActivity : AppCompatActivity() {
     val secretNumber = SecretNumber()
     val TAG = MaterialActivity::class.java.simpleName
 
+    // 產生：生成activity物件時，onCreate()被執行
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate:")
         setContentView(R.layout.activity_material)
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -80,8 +82,44 @@ class MaterialActivity : AppCompatActivity() {
         val nickname = getSharedPreferences("guess", Context.MODE_PRIVATE)
                 .getString("REC_NICKNAME", null)
         Log.d(TAG, "data: $count / $nickname")
+    }
 
+    // 利用control+o開啟覆寫，輸入覆寫生命週期函數關鍵字
+    // 開始：出現第一個畫面前，onStart()被執行
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ");
+    }
 
+    // 繼續：出現第一個畫面後，onResume()被執行。開始有畫面與user互動
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: ");
+    }
+
+    // 中斷：按鈕按下去後，要轉換下一個畫面前，OnPause()被執行。
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause: ");
+    }
+
+    // 停止：跳轉第二畫面後，原畫面onStop()被執行
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop: ");
+    }
+
+    // 重啟：在第二畫面返回前一畫面，按鈕按下去後，返回的畫面還沒出現前，OnRestart()被執行。
+    // 回到onStart()
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG, "onRestart: ");
+    }
+
+    // 消滅：物件清除後，onDestroy()被執行，回到桌面
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: ");
     }
 
     fun check(view: View){
