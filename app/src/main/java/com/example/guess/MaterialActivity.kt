@@ -11,9 +11,13 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.android.synthetic.main.activity_record.*
 import kotlinx.android.synthetic.main.content_material.*
+import kotlinx.android.synthetic.main.content_material.counter
 
 class MaterialActivity : AppCompatActivity() {
+
+    private val REQUEST_RECORD: Int = 100
 
     // 關鍵字lateinit指此變數晚一點才會給初始值，解決null問題
     private lateinit var viewModel: GuessViewModel
@@ -57,19 +61,7 @@ class MaterialActivity : AppCompatActivity() {
         // layout>activity_material.xml>ComponentTree>fab>id；.setOnClickListener設定按下後的動作(lambda)
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             // 產生詢問對話框：詢問使用者是否要重新玩
-            AlertDialog.Builder(this)
-                .setTitle("Replay game")
-                .setMessage("Are you sure?")
-                // 正向按鈕-ok，lambda參數2指按下按鈕的反應
-                .setPositiveButton(getString(R.string.ok), { dialog, which ->
-                    // 重置
-                    viewModel.reset()
-                    // 輸入字串框也要重置
-                    number.setText("")
-                })
-                // 中立按鈕
-                .setNeutralButton("Cancel", null)
-                .show()
+            replay()
 
             viewModel.reset()
         }
@@ -84,32 +76,48 @@ class MaterialActivity : AppCompatActivity() {
         Log.d(TAG, "data: $count / $nickname")
     }
 
+    private fun replay() {
+        AlertDialog.Builder(this)
+                .setTitle("Replay game")
+                .setMessage("Are you sure?")
+                // 正向按鈕-ok，lambda參數2指按下按鈕的反應
+                .setPositiveButton(getString(R.string.ok), { dialog, which ->
+                    // 重置
+                    viewModel.reset()
+                    // 輸入字串框也要重置
+                    number.setText("")
+                })
+                // 中立按鈕
+                .setNeutralButton("Cancel", null)
+                .show()
+    }
+
     // 利用control+o開啟覆寫，輸入覆寫生命週期函數關鍵字
-    // 開始：出現第一個畫面前，onStart()被執行
+    // 開始：出現此畫面前，onStart()被執行
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ");
     }
 
-    // 繼續：出現第一個畫面後，onResume()被執行。開始有畫面與user互動
+    // 繼續：出現此畫面後，onResume()被執行。開始有畫面與user互動
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: ");
     }
 
-    // 中斷：按鈕按下去後，要轉換下一個畫面前，OnPause()被執行。
+    // 中斷：按鈕按下去後，要轉換RecordActivity前，OnPause()被執行。
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: ");
     }
 
-    // 停止：跳轉第二畫面後，原畫面onStop()被執行
+    // 停止：跳轉RecordActivity後，原畫面onStop()被執行
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop: ");
     }
 
-    // 重啟：在第二畫面返回前一畫面，按鈕按下去後，返回的畫面還沒出現前，OnRestart()被執行。
+    // 重啟：在RecordActivity返回前一畫面，按鈕按下去後，返回的畫面還沒出現前，OnRestart()被執行。
     // 回到onStart()
     override fun onRestart() {
         super.onRestart()
@@ -156,11 +164,28 @@ class MaterialActivity : AppCompatActivity() {
                     // 傳遞原本畫面資料到目標畫面：將原本畫面的count加到intent物件中存入
                     // 參數1給標籤；參數2要加的資料
                     intent.putExtra("COUNTER", secretNumber.count)
-                    // 幫忙將intent物件送到Android系統，讓系統把Activity產生出來
-                    startActivity(intent)
+                    // 將intent物件送到Android系統，讓系統把RecordActivity產生出來，無法將結果回傳
+//                    startActivity(intent)
+                    // 為了產生結果而將intent物件傳送到RecordActivity，參數2指對應碼，可以回傳結果
+                    startActivityForResult(intent, REQUEST_RECORD)
                 }
             })
             .show()
 
+    }
+
+    //conctrl+O覆寫onActivityResult，得到RecordActivity回傳的結果資料；參數1指對應碼，參數2指RecordActivity返回的結果
+    // 在RecordActivity呼叫setResult()，會回到此畫面的onActivityResult()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // 兩種條件都符合
+        if(requestCode == REQUEST_RECORD){
+            if(resultCode == RESULT_OK){
+                // 接收來自RecordActivity傳來的標籤Nick的資料，與RecordActivity的.putExtra()對應
+                val nickname = data?.getStringExtra("Nick")
+                Log.d(TAG, "onActivityResult: ${nickname}")
+                replay()
+            }
+        }
     }
 }
