@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// 儲存所有猜數字的記錄(nickname, count)
+// 要儲存所有猜數字的記錄(nickname, count)
 // 標示annotation - Entity
 
 @Entity
@@ -17,6 +17,7 @@ class Record(
     @NonNull
     var counter:Int){
 
+    // 區域變數
     @PrimaryKey(autoGenerate = true)    // 自動變成Key值且在儲存時會自動加入
     var id: Long = 0
 }

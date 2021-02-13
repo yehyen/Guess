@@ -4,45 +4,63 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.room.Room
+import com.example.guess.data.GameDatabase
+import com.example.guess.data.Record
 import kotlinx.android.synthetic.main.activity_record.*
 
-// è³‡æ–™å¯«å…¥å„²å­˜æˆæª”æ¡ˆåˆ°è¨˜æ†¶æˆ–ç¡¬ç¢Ÿï¼Œå†å°‡è³‡æ–™å–å‡ºå›å‚³
+// ÙYÁÏŒ‘Èëƒ¦´æ³É™n°¸µ½Ó›‘›»òÓ²µú£¬ÔÙŒ¢ÙYÁÏÈ¡³ö»Ø‚÷
 class RecordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_record)
 
-        // å–å¾—MaterialActivityçš„startActivityForResult()å‚³ä¾†è³‡æ–™(countæ•¸)
-        // åƒæ•¸1å°æ‡‰MaterialActivityä¸­æ¨™ç±¤COUNTERï¼›åƒæ•¸2æ‰¾ä¸åˆ°æ¨™ç±¤COUNTERå€¼æ™‚ï¼Œçµ¦äºˆçš„é è¨­å€¼
+        // È¡µÃMaterialActivityµÄstartActivityForResult()‚÷íÙYÁÏ(count”µ)
+        // …¢”µ1Œ¦‘ªMaterialActivityÖĞ˜Ë»`COUNTER£»…¢”µ2ÕÒ²»µ½˜Ë»`COUNTERÖµ•r£¬½oÓèµÄîAÔOÖµ
         val count = intent.getIntExtra("COUNTER", -1)
 
-        // å°‡å¾—åˆ°çš„è³‡æ–™(countæ•¸)é¡¯ç¤ºåœ¨activity_record.xml
+        // Œ¢µÃµ½µÄÙYÁÏ(count”µ)ï@Ê¾ÔÚactivity_record.xml
         counter.setText(count.toString())
 
-        // å–å¾—activity_recordçš„saveæŒ‰éˆ•ï¼ŒæŒ‰ä¸‹æŒ‰éˆ•å¾Œå‹•ä½œ
+        // È¡µÃactivity_recordµÄsave°´âo£¬°´ÏÂ°´âoáá„Ó×÷
         save.setOnClickListener{ view ->
-            // å¾—åˆ°nickname
-            val nickname = nickname.text.toString()
-            // å„²å­˜è³‡æ–™å®¹å™¨ï¼Œåƒæ•¸1æª”æ¡ˆåç¨±ï¼Œå³å°‡æœƒå„²å­˜ç‚ºxmlæª”ï¼Œåƒæ•¸2å­˜å–æ¬Šé™
+            // µÃµ½nickname
+            val nick = nickname.text.toString()
+            // ƒ¦´æÙYÁÏÈİÆ÷£¬…¢”µ1™n°¸Ãû·Q£¬¼´Œ¢•şƒ¦´æéxml™n£¬…¢”µ2´æÈ¡™àÏŞ
             getSharedPreferences("guess", Context.MODE_PRIVATE)
-                    .edit()     // å¾—åˆ°SharedPreferencesç·¨è¼¯å™¨ï¼Œä¹‹å¾Œæ‰èƒ½å¯«å…¥è³‡æ–™
-                    .putInt("REC_COUNTER", count)     // å¯«å…¥è³‡æ–™ï¼Œåƒæ•¸1å€¼çš„å„²å­˜åç¨±ï¼Œåƒæ•¸2è¦å¯«å…¥çš„è³‡æ–™
-                    .putString("REC_NICKNAME", nickname)
-//                    .commit()   // commit()æ˜¯å­˜å–èˆ‡åŸ·è¡ŒåŒæ­¥ï¼Œä¸€æœ‰è³‡æ–™å­˜å…¥ç«‹åˆ»åŸ·è¡Œå¯«å…¥ç¡¬ç¢Ÿï¼Œæˆ–æœ‰æˆåŠŸæˆ–å¤±æ•—çš„è¿”å›å€¼
-                    // å„²å­˜è³‡æ–™ï¼šapply()æ˜¯å­˜å–èˆ‡åŸ·è¡Œå±¬éåŒæ­¥ï¼Œå…ˆå°‡è³‡æ–™å­˜å–åœ¨è¨˜æ†¶é«”å¾Œå†åŸ·è¡Œ(å¯«å…¥ç¡¬ç¢Ÿ)
-                    // è®“å¾Œé¢çš„ç¨‹å¼ç¢¼å¯åœ¨è¨˜æ†¶é«”ä¸­ä¿®æ”¹å‰é¢è³‡æ–™ï¼Œæ•ˆç‡è¼ƒå¥½ï¼Œæ²’æœ‰è¿”å›å€¼
+                    .edit()     // µÃµ½SharedPreferences¾İ‹Æ÷£¬Ö®áá²ÅÄÜŒ‘ÈëÙYÁÏ
+                    .putInt("REC_COUNTER", count)     // Œ‘ÈëÙYÁÏ£¬…¢”µ1ÖµµÄƒ¦´æÃû·Q£¬…¢”µ2ÒªŒ‘ÈëµÄÙYÁÏ
+                    .putString("REC_NICKNAME", nick)
+//                    .commit()   // commit()ÊÇ´æÈ¡ÅcˆÌĞĞÍ¬²½£¬Ò»ÓĞÙYÁÏ´æÈëÁ¢¿ÌˆÌĞĞŒ‘ÈëÓ²µú£¬»òÓĞ³É¹¦»òÊ§”¡µÄ·µ»ØÖµ
+                    // ƒ¦´æÙYÁÏ£ºapply()ÊÇ´æÈ¡ÅcˆÌĞĞŒÙ·ÇÍ¬²½£¬ÏÈŒ¢ÙYÁÏ´æÈ¡ÔÚÓ›‘›ówááÔÙˆÌĞĞ(Œ‘ÈëÓ²µú)
+                    // ×ŒááÃæµÄ³ÌÊ½´a¿ÉÔÚÓ›‘›ówÖĞĞŞ¸ÄÇ°ÃæÙYÁÏ£¬Ğ§ÂÊİ^ºÃ£¬›]ÓĞ·µ»ØÖµ
                     .apply()
 
-            // å°‡nicknameå­˜å…¥intentç‰©ä»¶
-            val intent = Intent()
-            // å¯«å…¥è³‡æ–™ï¼Œåƒæ•¸1å€¼çš„æ¨™ç±¤åç¨±ï¼Œåƒæ•¸2è¦å¯«å…¥çš„è³‡æ–™
-            intent.putExtra("Nick", nickname)
+            //insert to RoomÙYÁÏì
+            // Room test
+            // ½¨Á¢GameDatabaseÎï¼ş£¬this=MaterialActivity
+            val database = Room.databaseBuilder(this,
+                    GameDatabase::class.java, "game.db")
+                    .build()
+            // ÒªŒ‘ÈëÙYÁÏìµÄrecord
+            val record = Record(nick, count)
+            // ±¾ÉíÒÑÓĞÒ»‚€ë[ĞÎˆÌĞĞ¾wÒª¸úÊ¹ÓÃÕß»¥„Ó
+            // ß@ÑeÒªÁíÍâ„“ÔìÒ»‚€ˆÌĞĞ¾wí†¢„Ó²Å²»•şÔì³ÉĞnÍ»
+            // ®”lambdaÎï¼şÖĞµÄ…¢”µÊÇÎ¨Ò»»ò×îááÒ»‚€£¬¿ÉÒÔ·ÅÔÚ()µÄÍâÃæ
+            Thread(){
+                database.recordDao().insert(record)
+            }.start()
 
-            // åœ¨ç¬¬æ­¤ç•«é¢å‘¼å«setResult()ï¼Œæœƒå›åˆ°MaterialActivityçš„onActivityResult()
-            // åƒæ•¸1æŒ‡çµæœè®Šæ•¸ï¼Œåƒæ•¸2å›å‚³è³‡æ–™
+            // Œ¢nickname´æÈëintentÎï¼ş
+            val intent = Intent()
+            // Œ‘ÈëÙYÁÏ£¬…¢”µ1ÖµµÄ˜Ë»`Ãû·Q£¬…¢”µ2ÒªŒ‘ÈëµÄÙYÁÏ
+            intent.putExtra("Nick", nick)
+
+            // ÔÚµÚ´Ë®‹Ãæºô½ĞsetResult()£¬•ş»Øµ½MaterialActivityµÄonActivityResult()
+            // …¢”µ1Ö¸½Y¹û×ƒ”µ£¬…¢”µ2»Ø‚÷ÙYÁÏ
             setResult(RESULT_OK, intent)
 
-            // çµæŸæ­¤activityï¼Œæ‰æœƒå°‡RESULT_OKå¾€å‰å‚³
+            // ½YÊø´Ëactivity£¬²Å•şŒ¢RESULT_OKÍùÇ°‚÷
             finish()
 
         }

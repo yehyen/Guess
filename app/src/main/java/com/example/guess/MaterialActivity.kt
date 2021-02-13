@@ -11,6 +11,9 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.example.guess.data.GameDatabase
+import com.example.guess.data.Record
 import kotlinx.android.synthetic.main.activity_record.*
 import kotlinx.android.synthetic.main.content_material.*
 import kotlinx.android.synthetic.main.content_material.counter
@@ -74,6 +77,20 @@ class MaterialActivity : AppCompatActivity() {
         val nickname = getSharedPreferences("guess", Context.MODE_PRIVATE)
                 .getString("REC_NICKNAME", null)
         Log.d(TAG, "data: $count / $nickname")
+
+        // Room資料庫 test
+        // 建立GameDatabase物件，this=MaterialActivity
+        val database = Room.databaseBuilder(this,
+                GameDatabase::class.java, "game.db")
+                .build()
+        // 要寫入資料庫的record
+        val record = Record("Jack", 3)
+        // 本身已有一個隱形執行緒要跟使用者互動
+        // 這裡要另外創造一個執行緒來啟動才不會造成衝突
+        // 當lambda物件中的參數是唯一或最後一個，可以放在()的外面
+        Thread(){
+            database.recordDao().insert(record)
+        }.start()
     }
 
     private fun replay() {
