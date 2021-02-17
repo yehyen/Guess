@@ -38,17 +38,13 @@ class RecordActivity : AppCompatActivity() {
 
             //insert to Room資料庫
             // Room test
-            // 建立GameDatabase物件，this=MaterialActivity
-            val database = Room.databaseBuilder(this,
-                    GameDatabase::class.java, "game.db")
-                    .build()
-            // 要寫入資料庫的record
-            val record = Record(nick, count)
             // 本身已有一個隱形執行緒要跟使用者互動
             // 這裡要另外創造一個執行緒來啟動才不會造成衝突
             // 當lambda物件中的參數是唯一或最後一個，可以放在()的外面
             Thread(){
-                database.recordDao().insert(record)
+                // 確保每一物件都用getInstance取得singleton單一物件來執行
+                GameDatabase.getInstance(this)?.recordDao()?.
+                insert(Record(nick, count))
             }.start()
 
             // 將nickname存入intent物件

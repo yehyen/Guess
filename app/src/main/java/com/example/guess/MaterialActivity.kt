@@ -2,6 +2,7 @@ package com.example.guess
 
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -78,19 +79,14 @@ class MaterialActivity : AppCompatActivity() {
                 .getString("REC_NICKNAME", null)
         Log.d(TAG, "data: $count / $nickname")
 
-        // Room資料庫 test
-        // 建立GameDatabase物件，this=MaterialActivity
-        val database = Room.databaseBuilder(this,
-                GameDatabase::class.java, "game.db")
-                .build()
-        // 要寫入資料庫的record
-        val record = Record("Jack", 3)
-        // 本身已有一個隱形執行緒要跟使用者互動
-        // 這裡要另外創造一個執行緒來啟動才不會造成衝突
-        // 當lambda物件中的參數是唯一或最後一個，可以放在()的外面
-        Thread(){
-            database.recordDao().insert(record)
-        }.start()
+        // android特別類別：AsyncTask.execute, 同thread()功能
+        // 將動作放入另一執行緒(因為已在RecordActivity執行一個Thread())
+        AsyncTask.execute{
+            // Room資料庫 read test
+            val list = GameDatabase.getInstance(this)?.recordDao()?.getAll()
+            list?.forEach {
+                Log.d(TAG, "record: ${it.nickname} ${it.counter}");}
+        }
     }
 
     private fun replay() {
