@@ -14,6 +14,7 @@ interface RecordDao{
     fun insert(record: Record)
 
     // 資料查詢
+    //加上關鍵字suspend就可以在coroutines執行
     @Query("select * from record")
-    fun getAll(): List<Record>
+    suspend fun getAll(): List<Record>
 }

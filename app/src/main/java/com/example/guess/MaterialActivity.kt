@@ -81,12 +81,12 @@ class MaterialActivity : AppCompatActivity() {
 
         // android特別類別：AsyncTask.execute, 同thread()功能
         // 將動作放入另一執行緒(因為已在RecordActivity執行一個Thread())
-        AsyncTask.execute{
-            // Room資料庫 read test
-            val list = GameDatabase.getInstance(this)?.recordDao()?.getAll()
-            list?.forEach {
-                Log.d(TAG, "record: ${it.nickname} ${it.counter}");}
-        }
+//        AsyncTask.execute{
+//            // Room資料庫 read test
+//            val list = GameDatabase.getInstance(this)?.recordDao()?.getAll()
+//            list?.forEach {
+//                Log.d(TAG, "record: ${it.nickname} ${it.counter}");}
+//        }
     }
 
     private fun replay() {
