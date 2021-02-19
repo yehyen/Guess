@@ -8,12 +8,28 @@ import androidx.room.Room
 import com.example.guess.data.GameDatabase
 import com.example.guess.data.Record
 import kotlinx.android.synthetic.main.activity_record.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 // 資料寫入儲存成檔案到記憶或硬碟，再將資料取出回傳
-class RecordActivity : AppCompatActivity() {
+class RecordActivity : AppCompatActivity(), CoroutineScope {
+
+    private lateinit var job: Job
+
+    // 實作CoroutineScope，取得主要執行緒來源
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_record)
+
+        // 產生工作
+        job = Job()
 
         // 取得MaterialActivity的startActivityForResult()傳來資料(count數)
         // 參數1對應MaterialActivity中標籤COUNTER；參數2找不到標籤COUNTER值時，給予的預設值
@@ -38,13 +54,12 @@ class RecordActivity : AppCompatActivity() {
 
             //insert to Room資料庫
             // Room test
-            // 本身已有一個隱形執行緒要跟使用者互動
-            // 這裡要另外創造一個執行緒來啟動才不會造成衝突
-            // 當lambda物件中的參數是唯一或最後一個，可以放在()的外面
-            Thread(){
-                // 確保每一物件都用getInstance取得singleton單一物件來執行
-                GameDatabase.getInstance(this)?.recordDao()?.
-                insert(Record(nick, count))
+            //Coroutines中的builder，自動在主要執行緒另外產生執行緒協程
+            //此方式包含生命週期處理、清理
+            launch{
+                // 插入資料
+                GameDatabase.getInstance(this@RecordActivity)?.recordDao()?.
+                    insert(Record(nick, count))
             }.start()
 
             // 將nickname存入intent物件
@@ -60,5 +75,11 @@ class RecordActivity : AppCompatActivity() {
             finish()
 
         }
+    }
+
+    // job工作要離開遊戲記錄清單之前，按下返回鍵會清除頁面資料
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }
