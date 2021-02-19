@@ -1,5 +1,6 @@
 package com.example.guess
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
 
+// 主功能設計
 class MainActivity : AppCompatActivity() {
 
     // 得到MainActivity的字串，讓Log除錯用
@@ -22,17 +24,9 @@ class MainActivity : AppCompatActivity() {
     //顯示項目
     val functions = listOf<String>(
             "Camera",
-            "Invite friend",
-            "Parking",
+            "Guess game",
+            "Record list",
             "Download coupons",
-            "A",
-            "B",
-            "B",
-            "B",
-            "B",
-            "B",
-            "B",
-            "B",
             "News",
             "Maps")
 
@@ -62,18 +56,32 @@ class MainActivity : AppCompatActivity() {
             return holder
         }
 
-        // 當有資料時，設定資料位置；position：資料在第幾列
+        // 當有資料時會自動被呼叫，設定資料位置；position：資料在第幾列
         override fun onBindViewHolder(holder: FunctionHolder, position: Int) {
             holder.nameText.text = functions.get(position)
+            // 當user按下功能鍵，傳入被按下的position
+            holder.itemView.setOnClickListener {
+                functionClicked(position)
+            }
         }
 
-        // 裡面有多少筆資料
+        // 裡面有多少筆資料，來自functions
         override fun getItemCount(): Int {
             return functions.size
         }
     }
 
-    // 暫存功能
+    // 判斷功能鍵，按下按鈕跳到對應的該畫面
+    private fun functionClicked(position: Int) {
+        when(position){
+            1 -> startActivity(Intent(this, MaterialActivity::class.java))
+            2 -> startActivity(Intent(this, RecordListActivity::class.java))
+            else -> return
+        }
+
+    }
+
+    // 暫存被滑出功能表，定點在row_function.xml>name
     class FunctionHolder(view:View): RecyclerView.ViewHolder(view){
         var nameText: TextView = view.name
     }
