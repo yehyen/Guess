@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.guess.data.EventResult
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
 import org.json.JSONArray
@@ -39,16 +41,14 @@ class MainActivity : AppCompatActivity() {
 
         Thread {
             val data = URL("http://api.snooker.org/?t=5&s=2020").readText()
-            println(data)
-            
-            // 利用json.org解析網頁，速度較慢，多了轉換JSON物件的動作
-            val array = JSONArray(data)
-            for(i in 0..array.length()-1){
-                // 將筆網頁資料放入JSON物件
-                val obj = array.getJSONObject(i)
-                // 印出所有ID的值
-                println(obj.getInt("ID"))
+
+            // 利用Gson()快速解析json資料
+            val result = Gson().fromJson(data, EventResult::class.java)
+            // 得到所有json資料
+            result.forEach {
+                Log.d(TAG, "onCreate: $it")
             }
+
         }.start()
 
 
