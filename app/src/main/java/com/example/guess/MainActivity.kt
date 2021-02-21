@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
+import org.json.JSONArray
 import java.net.URL
 
 // 主功能設計
@@ -37,7 +38,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Thread {
-            val data = URL("http://tw.yahoo.com").readText()
+            val data = URL("http://api.snooker.org/?t=5&s=2020").readText()
+            println(data)
+            
+            // 利用json.org解析網頁，速度較慢，多了轉換JSON物件的動作
+            val array = JSONArray(data)
+            for(i in 0..array.length()-1){
+                // 將筆網頁資料放入JSON物件
+                val obj = array.getJSONObject(i)
+                // 印出所有ID的值
+                println(obj.getInt("ID"))
+            }
         }.start()
 
 
