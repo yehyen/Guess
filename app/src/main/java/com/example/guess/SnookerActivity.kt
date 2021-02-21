@@ -3,6 +3,8 @@ package com.example.guess
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.guess.data.EventResult
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -25,23 +27,32 @@ class SnookerActivity : AppCompatActivity(), CoroutineScope {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_snooker)
 
+        // Lifecycle傾聽觀察SnookerViewModel，取得資料筆數
+        // 使用MVVM的LifeCycle和LifeData，以及ViewModel的建立
+        // 可以避免多餘的工作留在背景佔盡資源
+        // 如：進入ViewModel要耗時8秒但一進入後不到8秒就退出，正在進行產生的ViewModel會自動刪除不再繼續
+        val viewModel = ViewModelProvider(this).get(SnookerViewModel::class.java)
+        viewModel.events.observe(this, Observer { events ->
+            Log.d(TAG, "onCreate: ${events.size}")
+        })
+
         // 在底下已override Coroutines的get()，這裡可直接啟動Coroutines
-        launch {
+        /*launch {
             val data = URL("http://api.snooker.org/?t=5&s=2020").readText()
             val events = Gson().fromJson(data, EventResult::class.java)
             events.forEach {
                 Log.d(TAG, "onCreate: $it")
             }
-        }
+        }*/
 
         // 利用Corutine連線網路工作
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val data = URL("http://api.snooker.org/?t=5&s=2020").readText()
-//            val events = Gson().fromJson(data, EventResult::class.java)
-//            events.forEach {
-//                Log.d(TAG, "onCreate: $it")
-//            }
-//        }
+/*        CoroutineScope(Dispatchers.IO).launch {
+            val data = URL("http://api.snooker.org/?t=5&s=2020").readText()
+            val events = Gson().fromJson(data, EventResult::class.java)
+            events.forEach {
+                Log.d(TAG, "onCreate: $it")
+            }
+        }*/
     }
 
     // 網路工作不能在Main執行緒動作
