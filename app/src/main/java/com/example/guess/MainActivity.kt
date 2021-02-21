@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
+import java.net.URL
 
 // 主功能設計
 class MainActivity : AppCompatActivity() {
@@ -30,9 +31,15 @@ class MainActivity : AppCompatActivity() {
             "News",
             "Maps")
 
+    // mainthread
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Thread {
+            val data = URL("http://tw.yahoo.com").readText()
+        }.start()
+
 
         //RecyclerView：當user上下滑動元件離開畫面時，該元件會先被儲存等待之後被取出
         //早期是用丟棄方式
