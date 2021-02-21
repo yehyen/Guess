@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             result.forEach {
                 Log.d(TAG, "onCreate: $it")
             }
-
         }.start()
 
 
