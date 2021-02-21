@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
             "Record list",
             "Download coupons",
             "News",
+            "Snooker",
             "Maps")
 
     // mainthread
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         when(position){
             1 -> startActivity(Intent(this, MaterialActivity::class.java))
             2 -> startActivity(Intent(this, RecordListActivity::class.java))
+            5 -> startActivity(Intent(this, SnookerActivity::class.java))
             else -> return
         }
 
