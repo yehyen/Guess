@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -51,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             }
         }.start()
 
-
         //RecyclerView：當user上下滑動元件離開畫面時，該元件會先被儲存等待之後被取出
         //早期是用丟棄方式
         //設定版面功能表：LinearLayout清單流水式，可以上下滑動
@@ -60,6 +61,28 @@ class MainActivity : AppCompatActivity() {
         recycler.setHasFixedSize(true)
         // adapter連接器，實現一個或多個系統不同部分之間的連接，獲得協同處理
         recycler.adapter = FunctionAdapter()
+
+        //spinner微調器自製下拉選單 - 顯示固定個數的資料
+        val colors = arrayOf("Red", "Green", "Blue")
+        // 參數2指每一列資料的layout(這裡使用android內建的layout，可在SDK找到)，參數3.4指資料來源
+        val adapter = ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, colors)
+        // 下拉效果 - 選單變寬
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+        // 設定到spinner的adapter
+        spinner.adapter = adapter
+        // 點擊後抓到資料，需override兩種方法：沒有點擊時，已經點擊時
+        spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+            // 參數1=AdapterView該對應的資料，參數2=點擊的TextView，參數4=id值
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                Log.d(TAG, "onItemSelected: ${colors[position]}")
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+        }
     }
 
     //配置畫面的holder，必須繼承RecyclerView.Adapter來做畫面功能
