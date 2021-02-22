@@ -1,8 +1,11 @@
 package com.example.guess
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,19 +13,20 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.guess.data.EventResult
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
-import org.json.JSONArray
 import java.net.URL
 
 // 主功能設計
 class MainActivity : AppCompatActivity() {
+    // 詢問相機使用權的判定值
+    private val REQUEST_CODE_CAMERA: Int = 100
 
     // 得到MainActivity的字串，讓Log除錯用
     val TAG = MainActivity::class.java.simpleName
@@ -81,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
-
         }
     }
 
@@ -115,12 +118,50 @@ class MainActivity : AppCompatActivity() {
     // 判斷功能鍵，按下按鈕跳到對應的該畫面
     private fun functionClicked(position: Int) {
         when(position){
+            0 -> {
+                //取得使用相機的權限
+                val permission = ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.CAMERA)
+                // 判斷從使用者得到的選擇，0=允許，已被內建在PackageManager.PERMISSION_GRANTED
+                if(permission == PackageManager.PERMISSION_GRANTED){
+                    takePhoto()
+                }else{
+                    //android預設危險權限對話框，由requestPermissions取得
+                    ActivityCompat.requestPermissions(this,
+                            arrayOf(Manifest.permission.CAMERA), REQUEST_CODE_CAMERA)
+                }
+            }
             1 -> startActivity(Intent(this, MaterialActivity::class.java))
             2 -> startActivity(Intent(this, RecordListActivity::class.java))
             5 -> startActivity(Intent(this, SnookerActivity::class.java))
             else -> return
         }
+    }
 
+    // 當按下android預設危險權限對話框的其一選項後，會自動執行
+    override fun onRequestPermissionsResult(
+            // 對應REQUEST_CODE_CAMERA的值
+            requestCode: Int,
+            // 警示字串
+            permissions: Array<out String>,
+            // 使用者按下選項的結果
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        //判斷requestCode的工作碼是否相同
+        if(requestCode == REQUEST_CODE_CAMERA){
+            // 判斷使用者輸入結果是否一致(系統會記錄第一次放在[0]，之前會自動登入)
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                takePhoto()
+            }
+        }
+    }
+
+    //開啟相機
+    private fun takePhoto() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivity(intent)
     }
 
     // 暫存被滑出功能表，定點在row_function.xml>name
