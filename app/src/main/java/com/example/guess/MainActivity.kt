@@ -7,9 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -163,9 +161,23 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivity(intent)
     }
-
     // 暫存被滑出功能表，定點在row_function.xml>name
     class FunctionHolder(view:View): RecyclerView.ViewHolder(view){
         var nameText: TextView = view.name
+    }
+
+    // 當Activity要出現的時候，會去要一個Menu表單物件
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // menu物件的充氣機，可以將xml設計圖檔變成menu物件，參數2要充氣到哪一個menu物件
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+    //當使用者去選擇Menu表單物件的時候，就會跑到此方法
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // 使用者按了圖示action_cache
+        if(item.itemId == R.id.action_cache){
+            Log.d(TAG, "Cache selected")
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
