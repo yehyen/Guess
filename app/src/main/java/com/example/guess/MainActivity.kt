@@ -191,6 +191,6 @@ class MainActivity : AppCompatActivity() {
     //結束cacheService物件，當app按下離開返回鍵後不會殘留service資源在背景
     override fun onStop() {
         super.onStop()
-        stopService(cacheService)
+        if (cacheService != null) stopService(cacheService) else Log.d(TAG, "error");
     }
 }
