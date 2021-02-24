@@ -1,13 +1,18 @@
 package com.example.guess
 
-import android.app.Service
+import android.app.IntentService
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 
-// Service用於在後臺完成使用者指定的操作
-// service有兩類，一類為自生自滅，執行完就結束；另一類與activity有關聯
-class CacheService() : Service(){
+// IntentService比Service好用，因為會自動執行onDestroy
+// 有自動排隊執行的特色：像聊天室訊息、下載等有順序性會好用
+// onHandleIntent是自己額外一個執行緒
+class CacheService() : IntentService("CacheService"){
+    // 一個service覆寫一個onHandleIntent和一個onStartCommand時，預設會自動執行onStartCommand
+    override fun onHandleIntent(intent: Intent?) {
+        Log.d(TAG, "onHandleIntent")
+    }
 
     private val TAG = CacheService::class.java.simpleName
 
@@ -15,12 +20,6 @@ class CacheService() : Service(){
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "onStartCommand")
-        // 假設severice執行後，android系統因為資源短缺而把service殺掉時，自己在把自己生出來
-        return START_STICKY
     }
 
     override fun onDestroy() {
