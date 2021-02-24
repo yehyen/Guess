@@ -29,6 +29,9 @@ class MainActivity : AppCompatActivity() {
     // 得到MainActivity的字串，讓Log除錯用
     val TAG = MainActivity::class.java.simpleName
 
+    // 利用Intent物件呼叫service
+    var cacheService : Intent? = null
+
     //顯示項目
     val functions = listOf<String>(
             "Camera",
@@ -178,10 +181,15 @@ class MainActivity : AppCompatActivity() {
         if(item.itemId == R.id.action_cache){
             Log.d(TAG, "Cache selected")
 
-            // 利用intent物件把service呼叫出來
-            val cacheService = Intent(this, CacheService::class.java)
+            cacheService = Intent(this, CacheService::class.java)
             startService(cacheService)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    //結束cacheService物件，當app按下離開返回鍵後不會殘留service資源在背景
+    override fun onStop() {
+        super.onStop()
+        stopService(cacheService)
     }
 }
