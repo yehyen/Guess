@@ -30,6 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--        Service用於在後臺完成使用者指定的操作-->
+        <service android:name=".CacheService" />
     </application>
 
 </manifest>

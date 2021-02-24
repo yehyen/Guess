@@ -177,6 +177,10 @@ class MainActivity : AppCompatActivity() {
         // 使用者按了圖示action_cache
         if(item.itemId == R.id.action_cache){
             Log.d(TAG, "Cache selected")
+
+            // 利用intent物件把service呼叫出來
+            val cacheService = Intent(this, CacheService::class.java)
+            startService(cacheService)
         }
         return super.onOptionsItemSelected(item)
     }
