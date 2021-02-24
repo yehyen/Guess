@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.guess">
-<!--    開啟相機功能-->
-    <uses-permission android:name="android.permission.CAMERA"/>
-<!--    限定有相機的硬體能才安裝此app(有開啟相機功能導入此設定)-->
-    <uses-feature android:name="android.hardware.camera2" android:required="true" />
-<!--    開啟網路連線-->
+    <!-- 開啟相機功能 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 限定有相機的硬體能才安裝此app(有開啟相機功能導入此設定) -->
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" /> <!-- 開啟網路連線 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guess"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SnookerActivity"></activity>
+        <activity android:name=".NewsActivity"></activity>
+        <activity android:name=".SnookerActivity" />
         <activity android:name=".RecordListActivity" />
         <activity android:name=".RecordActivity" />
         <activity
@@ -29,9 +30,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-<!--        Service用於在後臺完成使用者指定的操作-->
+        </activity> <!-- Service用於在後臺完成使用者指定的操作 -->
         <service android:name=".CacheService" />
     </application>
 
